@@ -20,7 +20,7 @@ Your progress is saved on your own phone. Nobody else can see it, including whoe
 - **Exercise group:** quests marked "counts as exercise" share one slot toward the day's medal. Do one; extras still earn XP.
 - **Medals:** a day is Bronze at 50%, Silver at 75% and Gold at 90% of that day's daily-quest XP, before streak bonuses. The total scales with whatever daily quests you set up.
 - **Streaks:** +10% XP from day 2 of a streak, +20% from day 7.
-- **Skills** each belong to one of six **abilities** (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma). Quest XP goes to the skill, its ability and your character level. Levels need 1.5x more XP each time, rounded up to the nearest 50.
+- **Skills** each belong to one of six **abilities** (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma). Quest XP goes to the skill, its ability and your character level. Levels need 1.5x more XP each time (1.2x from level 10 on), rounded up to the nearest 50.
 - **Weekly and side quests** are grouped by ability in collapsible lists, so long lists stay tidy.
 - **Conditions** (Poisoned, Exhausted, Happy, or your own) are logged per day.
 
@@ -41,9 +41,9 @@ The app starts with no quests. Use the **Add a new daily / weekly / side quest**
 
 When you first open the app you choose a starter companion: **Cat**, **Dog** or **Parrot**. Then:
 
-- **Each skill** has a companion at level 5, a different one at level 10, and a **shiny** version of the level 5 companion with a 1 in 1,000 chance every time you complete one of that skill's quests.
-- **Each ability** has its own companions at levels 5 and 10.
-- Skills you create yourself get a slime and a golem in colors picked from the skill's name.
+- **Each skill** has companions at levels 5, 10 and 15 (a golden legend), plus a **shiny** version of the level 5 companion with a 1 in 1,000 chance every time you complete one of that skill's quests.
+- **Each ability** has its own companions at levels 5, 10 and 15.
+- Skills you create yourself get a slime, a golem and a dragon in colors picked from the skill's name.
 
 Choose a companion to travel with you from the Hero tab. It appears on your character card.
 

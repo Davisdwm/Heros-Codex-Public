@@ -1,13 +1,14 @@
-<html><body style="background:#191514;margin:0;padding:8px;font:11px sans-serif;color:#ccc">
-<h3 style="font:600 13px sans-serif;margin:4px 0 8px">Skill companions: level 5, level 10, shiny</h3>
-<div id="g" style="display:grid;grid-template-columns:repeat(3,116px);gap:6px"></div>
-<h3 style="font:600 13px sans-serif;margin:14px 0 8px">Ability companions: level 5, level 10 &middot; and the three starters</h3>
-<div id="a" style="display:grid;grid-template-columns:repeat(3,116px);gap:6px"></div>
+<html><body style="background:#191514;margin:0;padding:8px;font:10px sans-serif;color:#ccc">
+<h3 style="font:600 12px sans-serif;margin:4px 0 6px">Skills: level 5 &middot; 10 &middot; 15 &middot; shiny</h3>
+<div id="g" style="display:grid;grid-template-columns:repeat(4,88px);gap:4px"></div>
+<h3 style="font:600 12px sans-serif;margin:12px 0 6px">Abilities: level 5 &middot; 10 &middot; 15 &middot; and the starters</h3>
+<div id="a" style="display:grid;grid-template-columns:repeat(4,88px);gap:4px"></div>
 <script src="pets3.js"></script><script src="petrender3.js"></script>
 <script>
-const P = [['Exercise','hound','nightmare'],['Creativity','finch','phoenix'],['Hygiene','frog','waterelemental'],['Health','mandrake','unicorn'],['Intellectualism','owl','golem'],['Self-Concept','fox','turtle'],['Culture','bat','beholder'],['Connection','slime','kingslime']];
-const cell = (n,o,l) => `<div style="text-align:center">${sprSVG(n,Object.assign({width:112},o))}<br>${l}</div>`;
-for(const [s,a,b] of P) document.getElementById('g').insertAdjacentHTML('beforeend', cell(a,{},s+' 5')+cell(b,{},s+' 10')+cell(a,{shiny:true},s+' shiny'));
-const A = [['STR','werewolf','minotaur'],['DEX','hare','boa'],['CON','mimic','gargoyle'],['INT','goblin','lich'],['WIS','naga','treant'],['CHA','jackalope','lion']];
-for(const [ab,a,b] of A) document.getElementById('a').insertAdjacentHTML('beforeend', cell(a,{},ab+' 5')+cell(b,{},ab+' 10')+(ab==='STR'?cell('cat',{},'Cat (starter)'):ab==='DEX'?cell('dog',{},'Dog (starter)'):ab==='CON'?cell('parrot',{},'Parrot (starter)'):'<div></div>'));
+const P = [['Exercise','hound','nightmare','pegasus'],['Creativity','finch','phoenix','thunderbird'],['Hygiene','hare','waterelemental','leviathan'],['Health','mandrake','treant','elk'],['Intellect','owl','golem','lich'],['Self-Concept','fox','turtle','kitsune'],['Culture','bat','beholder','vampire'],['Connection','slime','kingslime','emperorslime']];
+const cell = (n,o,l) => `<div style="text-align:center">${sprSVG(n,Object.assign({width:84},o))}<br>${l}</div>`;
+for(const [s,a,b,c] of P) document.getElementById('g').insertAdjacentHTML('beforeend', cell(a,{},s+' 5')+cell(b,{},s+' 10')+cell(c,{aura:'#f2cd78'},s+' 15')+cell(a,{shiny:true},'shiny'));
+const pup={a:[215,10,55], d:[215,15,30], c:[0,0,90], x:[200,70,45], y:[48,90,60]}, sage={a:[225,70,45], x:[45,95,58], z:[190,70,50], c:[45,40,88], d:[28,40,30]};
+const A = [['STR','rockgolem','minotaur','reddragon',{},'cat','Cat'],['DEX','frog','jackalope','panther',{},'dog','Dog'],['CON','dog','unicorn','tortoise',{pal:pup},'parrot','Parrot'],['INT','goblin','octowizard','wingedeye',{}],['WIS','parrot','wisp','qilin',{pal:sage}],['CHA','butterfly','lion','griffin',{}]];
+for(const [ab,a,b,c,o,st,stn] of A) document.getElementById('a').insertAdjacentHTML('beforeend', cell(a,o,ab+' 5')+cell(b,{},ab+' 10')+cell(c,{aura:'#f2cd78'},ab+' 15')+(st?cell(st,{},stn+' (starter)'):'<div></div>'));
 </script></body></html>

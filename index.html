@@ -237,6 +237,13 @@ h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;l
 .pet{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px;border:1px solid var(--line);background:var(--panel);text-align:center;width:100%}
 .pet .petart{width:84px;height:84px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.04),rgba(0,0,0,0) 70%)}
 .pet.got.rare{border-color:rgba(242,205,120,.6);box-shadow:inset 0 0 18px rgba(242,205,120,.12)}
+.pets4{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pets4 .pet{padding:8px 3px}
+.pets4 .pet .petart{width:64px;height:64px}
+.pets4 .pet .petart svg{width:64px;height:64px}
+.pets4 .pet .pn{font-size:12px}
+.pets4 .pet .ph{font-size:10px}
+.pet.got.legend{border-color:var(--gold-hi);box-shadow:inset 0 0 22px rgba(242,205,120,.18),0 0 0 1px rgba(242,205,120,.35)}
 .pet.got.elder{border-color:rgba(217,173,85,.45)}
 .pet:not(.got) .petart{opacity:.55}
 .pet .pn{font-size:13px;font-weight:700;line-height:1.15}
@@ -402,6 +409,8 @@ const RULES = {
   skillBase: 100,       // XP from skill level 1 to 2
   abilityBase: 200,     // XP from ability level 1 to 2 (abilities pool their skills)
   growth: 1.5,          // each level needs 1.5x the previous...
+  lateGrowth: 1.2,      // ...but only 1.2x from level 10 onward
+  lateFrom: 10,
   roundTo: 50,          // ...rounded up to the nearest 50
   streakShort: {days: 2, bonus: 0.10},
   streakLong:  {days: 7, bonus: 0.20},
@@ -409,7 +418,7 @@ const RULES = {
   rarePetChance: 1/1000  // per quest completed, for that skill's rare companion
 };
 const DEMO = !!window.XP_DEMO;
-const APP_VERSION = '2026.11.09-2028';
+const APP_VERSION = '2026.11.09-2111';
 const STORE_KEY = DEMO ? 'heros-codex-public-demo-v1' : 'heros-codex-public-v1';   // separate from any other copy on the same site
 
 /* ============ Icons ============ */
@@ -493,6 +502,326 @@ const SCHEMA = 1;
 // Sprites: 32x32 canvas. Rows of 16 chars are mirrored; rows of 32 are used as-is.
 // Region letters (auto-shaded): a c d x y z.  Flat: e eye, w white, n dark/mouth.
 const SPR = {
+rockgolem: { pal:{a:[30,10,48], c:[30,10,66], d:[30,10,30], x:[110,40,40]}, e:'#ffb03a', rows:[
+"..........xxxxxx",
+"........aaaaaaaa",
+".......aaacaaaaa",
+"......aaaccaaaaa",
+"......aaaaaaeaaa",
+"......aaaaaaaaaa",
+"...aa.aaadaaaaaa",
+"..aaa.aaaaaaadaa",
+"..aaa.aaaaaaaaaa",
+"..aa..aaadaaaaaa",
+"......aaaaaaaaaa",
+".......aaaaaaaaa",
+"........aaa.....",
+".......aaaa....."]},
+reddragon: { pal:{a:[2,70,42], d:[355,60,26], y:[40,80,60], x:[40,30,82]}, e:'#ffd23a', rows:[
+"..........x.....",
+"d.........xx....",
+"dd.........xaaaa",
+"dad.......aaaaaa",
+"daad.....aaaaeaa",
+"daaad....aaaaaaa",
+"daaaad....aaayyy",
+"daaaaad...aannyy",
+"daaaaaad..aaaaaa",
+"d.d.d.dadaaaaaaa",
+".......aaaaayyyy",
+"......aaaaayyyyy",
+".....aaaaaayyyyy",
+"....aaaaaaayyyyy",
+"....aaa.aaayyyyy",
+"...www..aaaayyyy",
+"........aaaaaaaa",
+".......aaaa..aaa",
+"......aaaa...aa.",
+".....wwww....ww."]},
+panther: { pal:{a:[270,20,20], c:[270,25,36]}, e:'#ffe14a', rows:[
+"......................a..a......",
+".....................aaaaaa.....",
+"....................aaaaeaaa....",
+"a...................aaaaaaaaccn.",
+"aa.................aaaaaaaaww...",
+".aa....aaaaaaaaaaaaaaaaaa.......",
+"..aaaaaaaaaaaaaaaaaaaaaa........",
+"...aaaaaaaaaaaaaaaaaaaa.........",
+"....aaaaaaaaaaaaaaaaaa..........",
+"....aaa.aaa.....aaa.aaa.........",
+"...aaa...aa.....aa...aaa........",
+"..aaa....aa.....aa....aaa.......",
+".www.....ww.....ww.....www......"]},
+tortoise: { pal:{a:[95,25,40], c:[30,35,38], z:[35,40,55], x:[110,55,40], y:[330,70,72], d:[25,40,25]}, e:'#120c0a', rows:[
+"........xxxxxxxxxx..............",
+"......xxxxyxxxxxxxxx............",
+"....xxxxxxxxxxxxyxxxxx..........",
+"...xxxyxxxxxxxxxxxxxxxx.........",
+"...xxxxxxxxxxxyxxxxxxxx.........",
+"...xxxxxyxxxxxxxxxxyxxx.........",
+"....xxxxxxxxxxxxxxxxxx..........",
+"......xxxxxxxxxxxxxx............",
+".............dd.................",
+"............ddd.................",
+"............ddd.................",
+"..........ccccdcccc.............",
+"........ccczcccczcccc...........",
+".......cczzzcccczzzccc......aaa.",
+"......ccczcccczccczcccc....aaaea",
+".....cccccccccccccccccc...aaaaaa",
+".....zzzzzzzzzzzzzzzzzzaaaaaann.",
+"......aaaa.........aaaaaaa......",
+"......aaaa..........aaaa........",
+".....aaaaa..........aaaaa......."]},
+octowizard: { pal:{a:[330,55,58], c:[220,70,45], y:[48,95,62]}, e:'#120c0a', rows:[
+"...............c",
+"..............cc",
+".............ccc",
+"............ccyc",
+"...........ccccc",
+"..........cccycc",
+"........cccccccc",
+"..........aaaaaa",
+".........aaaaaaa",
+"........aaaweaaa",
+"........aaaeeaaa",
+"........aaaaaaaa",
+".........aaaaaaa",
+"........aa.aa.aa",
+".......aa..aa.aa",
+"......aa..aa..aa",
+".....aa...aa...a",
+".....a.....aa...",
+"......a......a.."]},
+wingedeye: { pal:{a:[270,40,35], x:[140,70,45], z:[45,60,80]}, e:'#120c0a', rows:[
+"zz..............",
+"zzz.............",
+"zzzz......aaaaaa",
+".zzzz...aaaaaaaa",
+".zzzzz.aawwwwwww",
+"..zzzzzaawwwwwww",
+"..zzzzzawwwxxxxx",
+"...zzzzawwxxxxee",
+"....zzzawwxxxxee",
+"....zzzawwwxxxxx",
+".....zzaawwwwwww",
+"......zaaawwwwww",
+"........aaaaaaaa",
+"..........aaaaaa"]},
+wisp: { pal:{a:[275,70,60], c:[290,80,82], y:[55,100,75]}, e:'#2a0b4a', rows:[
+"...y...........c",
+"..yyy.........cc",
+"...y.........ccc",
+"...........ccaaa",
+"..........ccaaaa",
+".........ccaaaaa",
+"........ccaaaaaa",
+"...y....caaaaaaa",
+"..yyy..caaaweaaa",
+"...y...caaaeeaaa",
+".......caaaaaaaa",
+".......ccaaaaaaa",
+"........ccaaaaaa",
+".........cccaaaa",
+"...........ccccc",
+"....y...........",
+"...yyy..........",
+"....y..........."]},
+qilin: { pal:{a:[150,45,42], x:[40,95,58], y:[55,100,68], z:[45,90,60]}, e:'#ffe14a', rows:[
+"......................xx.....z..",
+".....................xyx.x..z...",
+"....................xyyxxyxz....",
+"...................xyyxaaaz.....",
+"..................xyyxaaaaaa....",
+"..................xyxaaaeaaaa...",
+".................xyxaaaaaaaaaa..",
+".................xyaaaa...aaaan.",
+".................xaaaa.....aaa..",
+"................aaaaa...........",
+"....xx.......aaaaaaa............",
+"...xyyx..aaaaaaaaaaa............",
+"..xyyxaaaaaaaaaaaaaa............",
+".xyyx.aaaaaaaaaaaaaa............",
+".xyx..aaaaaaaaaaaaaa............",
+"xyx...aaaaaaaaaaaaa.............",
+"xx.....aaa.aa...aa.aa...........",
+".......aa..aa...aa..aa..........",
+"......aa...aa...aa...aa.........",
+"......aa...aa...aa...aa.........",
+".....xx...xx....xx...xx.........",
+".....yx...yx....yx...yx........."]},
+butterfly: { pal:{a:[200,80,50], c:[190,85,72], x:[45,95,60], d:[270,25,20]}, e:'#120c0a', rows:[
+"...........d....",
+"..aaaa......d...",
+".aacccaa.....d..",
+"aacxxccaa.....d.",
+"acxxxccaaa....dd",
+"acxxccaaaaa...dd",
+"accccaaaaaaa..dd",
+".acaaaaaaaaaaadd",
+"..aaaaaaaaaaaadd",
+"...aaccaaaaaa.dd",
+"...acxxcaaaa..dd",
+"...acxxcaaa...dd",
+"....accaa.....dd",
+".....aa.......d."]},
+griffin: { pal:{a:[40,20,90], c:[25,55,42], x:[40,70,55], y:[45,90,55], d:[30,40,25]}, e:'#120c0a', rows:[
+".................cc.............",
+"................cccc.....aaa....",
+"...............ccccc....aaaaa...",
+"..............cccccc...aaaeaayy.",
+".............ccccccc...aaaaaayy.",
+"............cccccccc..aaaaaa.y..",
+"...........ccccccccc.aaaaa......",
+"..........ccccccccc.xxxaa.......",
+"...........xxxxxxxxxxxxx........",
+"..xx.....xxxxxxxxxxxxxx.........",
+".x......xxxxxxxxxxxxxxx.........",
+".x......xxxxxxxxxxxxxx..........",
+"..x.....xxx.xx....xx.xx.........",
+"........xx...x....x...yy........",
+".......xx...xx...x.....y........",
+"......dd...dd....yy............."]},
+pegasus: { pal:{a:[210,20,92], c:[200,65,72], z:[205,45,84]}, e:'#2a6cff', rows:[
+"......................cc........",
+"....zzz..............ccc.c......",
+"....wwwww...........ccccccc.....",
+".....zzzzzz........ccccaaac.....",
+"......wwwwwww.....ccccaaaaaa....",
+".......zzzzzzzz...cccaaaeaaaa...",
+"........wwwwwwww.cccaaaaaaaaaa..",
+".........zzzzzzzzccaaaa...aaaan.",
+"..........wwwwwwwcaaaa.....aaa..",
+"...........zzzzzaaaaa...........",
+"....cc.......aaaaaaa............",
+"...cccc..aaaaaaaaaaa............",
+"..ccccaaaaaaaaaaaaaa............",
+".cccc.aaaaaaaaaaaaaa............",
+".ccc..aaaaaaaaaaaaaa............",
+"ccc...aaaaaaaaaaaaa.............",
+"cc.....aaa.aa...aa.aa...........",
+".......aa..aa...aa..aa..........",
+"......aa...aa...aa...aa.........",
+"......aa...aa...aa...aa.........",
+".....cc...cc....cc...cc.........",
+".....cc...cc....cc...cc........."]},
+thunderbird: { pal:{a:[225,55,35], c:[200,60,70], y:[50,100,60]}, e:'#ffe14a', rows:[
+"...............y",
+"..............yy",
+".............aaa",
+"............aaaa",
+"aa..........aaea",
+"aaa.........aaac",
+"aaaa.......aaaac",
+"caaaa.....aaaaaa",
+"ccaaaa...aaaaccc",
+".ccaaaa.aaaacccc",
+"..ccaaaaaaaccccc",
+"...ccaaaaaaccccc",
+"....ccaaaaaacccc",
+".....ccaaaaacccc",
+"......c.aaaaaccc",
+"........aaaaaacc",
+".........aaaaaaa",
+".........yaa.aaa",
+"........yy...aa.",
+".......y........"]},
+leviathan: { pal:{a:[175,55,35], x:[190,70,55], c:[205,70,52]}, e:'#ffe14a', rows:[
+".......................xx.......",
+"......................xaaa......",
+".....................xaaaaa.....",
+".....................aaeaaaa....",
+".....................aaaaaaaaa..",
+"......................aaaawnwn..",
+"......................aaaaaaa...",
+".....................aaaa.......",
+".......xx...........aaaa........",
+"......xaaa.........aaaa.........",
+".....xaaaaa.......aaaa..........",
+"....aaa..aaa.....aaa............",
+"...aaa....aaa...aaa.............",
+"..aaa......aaa.aaa..............",
+"cccccccccccccccccccccccccccccccc",
+".cwcccwccccwcccccwcccwccccwcccc.",
+"cccccccccccccccccccccccccccccccc"]},
+elk: { pal:{a:[28,40,34], c:[35,30,62], y:[35,25,72], x:[110,50,40], d:[25,30,18]}, e:'#7dff6a', rows:[
+"..................y.y.yy.y......",
+"..................yyyyyyyy.y....",
+"...................yyxyyyyyy....",
+"....................yyx.yyy.....",
+"......................yy........",
+"......................aaa.......",
+"...........xxx.......aaaaa......",
+".........xxaaaxx....aaeaaaa.....",
+"......xxxaaaaaaaaaaaaaaaaaaan...",
+".....xaaaaaaaaaaaaaaaaaaaaa.....",
+"....aaaaaaaaaaaaaaaaaacccc......",
+"....aaaaaaaaaaaaaaaaaaccc.......",
+"....aaaaaaaaaaaaaaaaaaa.........",
+".....aaaaaaaaaaaaaaaaa..........",
+".....aaa..aa.......aa.aa........",
+".....aa...aa.......aa..aa.......",
+".....aa...aa.......aa..aa.......",
+".....aa...aa.......aa..aa.......",
+".....dd...dd.......dd..dd......."]},
+kitsune: { pal:{a:[45,40,88], c:[195,80,82], d:[30,40,40], x:[195,90,62]}, e:'#3ad6ff', rows:[
+".....xx...............d...d.....",
+".....xaa..xx.........dad.dad....",
+"......aa..xa........daaaaaad....",
+".xx....aa.aa........aaaaaaaa....",
+".xaa...aa.aa..xx...aaaaaeaaacc..",
+"...aa...aa.aa.xa...aaaaaaaccccn.",
+"....aa..aa.aa.aa....aaacccccc...",
+".....aa..aaaaaa....xxaaaccw.....",
+"......aaaaaaaaa...aaxxaccc......",
+"........aaaaaaa..aaaaacccc......",
+".........aaaaaa.aaaaaacccc......",
+"..........aaaa.aaaaaaacccc......",
+"..aa.......aaaaaaaaaaccc........",
+".acca.......aaaaaaaaacccc.......",
+".acaa.......aaaaaaaaccccc.......",
+"..acaa.....aaaaaaaa.aa.cc.......",
+"...acaaaaaaaaaaaaaa..aa.cc......",
+"....ccaaaaaaaaaaaad..dd.dd......"]},
+vampire: { pal:{a:[220,15,85], d:[260,25,16], x:[355,75,40], y:[45,85,55], c:[0,0,92]}, e:'#ff2a2a', rows:[
+"........dddddddd",
+".......ddddddddd",
+".......ddaaaaadd",
+"....xx.ddaaaaaaa",
+"...xxx..aaaaeaaa",
+"..xxxx..aaaaaaaa",
+"..xxxx...aaannwn",
+"..xxxd....aaaaaa",
+"..xxdddd..dddddd",
+".xxddddddddccccc",
+".xxdddddddcccccy",
+".xxddddddddccccc",
+"xxxdddddddddcccc",
+"xxxddddddddddddd",
+"xxdddddddddddddd",
+"xddddddddddddddd",
+"dddddddddddddddd",
+"..dddddd....dd.."]},
+emperorslime: { pal:{a:[215,70,52], c:[200,75,76], y:[45,90,55], x:[350,80,50], d:[215,55,28]}, e:'#120c0a', rows:[
+"..........y..y.y",
+"..........yyyyyy",
+"..........yyyyxy",
+".........aaaaaaa",
+"........aacaaaaa",
+"........acaaweaa",
+"........aaaaeeaa",
+"........aaaaaann",
+".........aaaaaaa",
+"......aaaaaaaaaa",
+".....aaaaaaaaaaa",
+"....aa.aaaaaaaaa",
+"....aa.aaaaaaaaa",
+"...aaa.aaaaaaaaa",
+"...aa..aaaaaaaaa",
+".......aaaaaaaaa",
+"........aaaa....",
+"........aaaa....",
+".......ddddd...."]},
 parrot: { pal:{a:[2,80,50], x:[48,95,58], z:[215,80,50], c:[40,30,88], d:[28,40,30]}, e:'#120c0a', rows:[
 "....................aaaa........",
 "...................aaaaaa.......",
@@ -1219,6 +1548,7 @@ function sprSVG(name, opts){
     out.push([x,y,col]);
   }
   let extra = '';
+  if(opts.aura && !locked){ const gid = 'la' + (++sprSVG.n); extra = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="${opts.aura}" stop-opacity=".42"/><stop offset="1" stop-color="${opts.aura}" stop-opacity="0"/></radialGradient></defs><ellipse cx="16" cy="17" rx="16" ry="15" fill="url(#${gid})"/>`; }
   if(shiny && !locked){
     const gid = 'sg' + (++sprSVG.n), gc = T.a ? T.a[0] : '#fff';
     extra = `<defs><radialGradient id="${gid}"><stop offset="0" stop-color="${gc}" stop-opacity=".5"/><stop offset="1" stop-color="${gc}" stop-opacity="0"/></radialGradient></defs><ellipse cx="16" cy="17" rx="16" ry="15" fill="url(#${gid})"/>`;
@@ -1239,47 +1569,47 @@ const STARTERS = [
   ['p_dog','dog','Dog','A loyal pup who would follow you into any dungeon, tail wagging the whole way.'],
   ['p_parrot','parrot','Parrot','A clever macaw who repeats your victories to anyone who will listen.'],
 ];
-const SKILL_PETS = { exercise:['hound','nightmare'], selfconcept:['fox','turtle'], hygiene:['frog','waterelemental'], culture:['bat','beholder'], connection:['slime','kingslime'], creativity:['finch','phoenix'], health:['mandrake','unicorn'], intellect:['owl','golem'] };
+const SKILL_PETS = { exercise:['hound','nightmare','pegasus'], selfconcept:['fox','turtle','kitsune'], hygiene:['hare','waterelemental','leviathan'], culture:['bat','beholder','vampire'], connection:['slime','kingslime','emperorslime'], creativity:['finch','phoenix','thunderbird'], health:['mandrake','treant','elk'], intellect:['owl','golem','lich'] };
 const PET_NAMES = {
-  exercise:    [['Trail Hound','Knows every path for miles and wants to run all of them.'],['Infernal Stallion','A nightmare of smoke and flame. Its hoofprints smolder for hours after a workout.']],
-  selfconcept: [['Lotus Fox','Naps in perfect balance on one paw. Knows exactly who it is.'],['Turtle Monk','Has held the same pose for three hundred years. Still breathing deeply.']],
-  hygiene:     [['Bubble Frog','Blows soap bubbles and croaks approvingly when you wash up.'],['Water Elemental','A living tide that keeps everything it touches fresh and clean.']],
-  culture:     [['Matinee Bat','Watches from the rafters. Shushes no one.'],['Beholder','Never blinks during a show. Has a dozen eyes for every scene.']],
-  connection:  [['Chatter Slime','Wobbles happily whenever someone says hello.'],['King Slime','Rules a kingdom of friends. Its crown has a jewel for each one.']],
-  creativity:  [['Lyre Finch','Hums your last idea back to you, slightly off-key.'],['Phoenix','Burns bright, starts fresh, and never stops creating.']],
-  health:      [['Mandrake Sprout','Screams softly when thirsty. Quite polite about it.'],['Healing Unicorn','Its horn glows when you take good care of yourself.']],
-  intellect:   [['Wisened Owl','Peers over its spectacles at anything you have not finished reading.'],['Tome Golem','A guardian stitched from a hundred books. It remembers every page.']],
+  exercise:    [['Trail Hound','Knows every path for miles and wants to run all of them.'],['Infernal Stallion','A nightmare of smoke and flame. Its hoofprints smolder for hours after a workout.'],['Pegasus','Moves so fast it simply takes off. No workout is too hard for it.']],
+  selfconcept: [['Lotus Fox','Naps in perfect balance on one paw. Knows exactly who it is.'],['Turtle Monk','Has held the same pose for three hundred years. Still breathing deeply.'],['Nine-Tailed Kitsune','A tail for every lesson learned about itself. Perfectly still, perfectly aware.']],
+  hygiene:     [['Fluffy Bunny','Grooms itself twelve times a day and looks wonderful every time.'],['Water Elemental','A living tide that keeps everything it touches fresh and clean.'],['Leviathan','A serpent of the clearest seas. Nothing murky survives near it.']],
+  culture:     [['Matinee Bat','Watches from the rafters. Shushes no one.'],['Beholder','Never blinks during a show. Has a dozen eyes for every scene.'],['Vampire Lord','Has seen every play, film and concert for five hundred years. Still has opinions.']],
+  connection:  [['Chatter Slime','Wobbles happily whenever someone says hello.'],['King Slime','Rules a kingdom of friends. Its crown has a jewel for each one.'],['Emperor Slime','Stood up one day and never sat back down. Its court is everyone it has ever met.']],
+  creativity:  [['Lyre Finch','Hums your last idea back to you, slightly off-key.'],['Phoenix','Burns bright, starts fresh, and never stops creating.'],['Thunderbird','Every beat of its wings is a new idea. Every cry is a masterpiece.']],
+  health:      [['Mandrake Sprout','Screams softly when thirsty. Quite polite about it.'],['Ancient Treant','Has outlived every illness in the forest by taking good care of itself.'],['Mossy Elk','Moss grows on its back and ferns sprout from its antlers. Strong, calm and well rested.']],
+  intellect:   [['Wisened Owl','Peers over its spectacles at anything you have not finished reading.'],['Tome Golem','A guardian stitched from a hundred books. It remembers every page.'],['Lich','Spent a thousand years studying. Still has a list of books it wants to get to.']],
 };
 const ABILITY_PETS = {
-  STR: [['werewolf','Werewolf','Strong enough to carry you home, and it would.'],['minotaur','Minotaur','Lifts boulders for fun. Has never skipped leg day.']],
-  DEX: [['hare','Swift Hare','Gone before you finish saying its name.'],['boa','Lithe Boa','Ties itself in knots on purpose. Untangles with a sigh of relief.']],
-  CON: [['mimic','Iron Mimic','Took a hit from a troll and only lost a hinge.'],['gargoyle','Gargoyle Sentinel','Has stood watch through a thousand storms without a crack.']],
-  INT: [['goblin','Goblin Hexer','Knows exactly one spell and casts it with total confidence. Very proud of the hat.'],['lich','Lich','Spent a thousand years studying. Still has questions.']],
-  WIS: [['naga','Naga Oracle','Sees a little further down the road than everyone else.'],['treant','Ancient Treant','Has watched forests rise and fall. Speaks slowly, and only when it matters.']],
-  CHA: [['jackalope','Jackalope','Charming, a little mischievous, and impossible to forget once you have met one.'],['lion','Lion','Walks into a room and everyone turns to look. Roars only when it matters.']],
+  STR: [['rockgolem','Rock Golem','A boulder that decided to get up and lift things.'],['minotaur','Minotaur','Lifts boulders for fun. Has never skipped leg day.'],['reddragon','Red Dragon','The strongest creature in any sky. Carries mountains for fun.']],
+  DEX: [['frog','Leaping Frog','Clears ten lily pads in a single hop and lands without a splash.'],['jackalope','Jackalope','Gone before you finish saying its name.'],['panther','Shadow Panther','Moves without a sound. Lands every jump.']],
+  CON: [['dog','Stalwart Pup','Never tired, never sick, never leaves your side.',{a:[215,10,55], d:[215,15,30], c:[0,0,90], x:[200,70,45], y:[48,90,60]}],['unicorn','Healing Unicorn','Its horn glows when you take good care of yourself.'],['tortoise','World Tortoise','Carries a whole forest on its back and has never once needed a rest.']],
+  INT: [['goblin','Goblin Hexer','Knows exactly one spell and casts it with total confidence. Very proud of the hat.'],['octowizard','Octopus Wizard','Eight arms means eight spellbooks open at once.'],['wingedeye','Winged Eye','Floats above everything and misses nothing.']],
+  WIS: [['parrot','Sage Parrot','Repeats only the advice worth hearing twice.',{a:[225,70,45], x:[45,95,58], z:[190,70,50], c:[45,40,88], d:[28,40,30]}],['wisp','Magic Wisp','A drifting spark of old magic. It lights the way when you are unsure.'],['qilin','Qilin','Appears only to the wise. Walks on clouds without bending a blade of grass.']],
+  CHA: [['butterfly','Butterfly','Every room gets a little brighter when it flutters in.'],['lion','Lion','Walks into a room and everyone turns to look. Roars only when it matters.'],['griffin','Griffin','Half lion, half eagle, and all charm. Kings have bowed to less.']],
 };
+const PET_LEVELS = [[5,'base'],[10,'elder'],[15,'legend']];
 function petDefs(){
   const st = STARTERS.find(x=>x[0]===state.profile.starter) || STARTERS[0];
   const out = [{ id:st[0], group:'starter', sprite:st[1], form:'base', starter:true, name:st[2], desc:st[3], how:'Starter companion' }];
   for(const s of state.skills){
-    let pair = SKILL_PETS[s.id], names = PET_NAMES[s.id], pal = null;
-    if(!pair){
-      pair = ['slime','golem']; let h=0; for(const ch of s.id) h=(h*31+ch.charCodeAt(0))%360;
+    let trio = SKILL_PETS[s.id], names = PET_NAMES[s.id], pal = null;
+    if(!trio){
+      trio = ['slime','golem','reddragon']; let h=0; for(const ch of s.id) h=(h*31+ch.charCodeAt(0))%360;
       pal = { a:[h,50,45], c:[h,45,68], d:[h,40,26], x:[(h+120)%360,45,45], y:[(h+40)%360,40,60], z:[(h+200)%360,45,50] };
-      names = [[`${s.name} Slime`,`A small slime that loves ${s.name.toLowerCase()} as much as you do.`],[`${s.name} Golem`,`A loyal guardian built from everything you have learned about ${s.name.toLowerCase()}.`]];
+      names = [[`${s.name} Slime`,`A small slime that loves ${s.name.toLowerCase()} as much as you do.`],[`${s.name} Golem`,`A loyal guardian built from everything you have learned about ${s.name.toLowerCase()}.`],[`${s.name} Dragon`,`A legend of ${s.name.toLowerCase()}, born from years of practice.`]];
     }
-    out.push({ id:`p_${s.id}_5`,    group:'skill', skill:s.id, sprite:pair[0], form:'base',  pal, name:names[0][0], desc:names[0][1], how:`${s.name} level 5` });
-    out.push({ id:`p_${s.id}_10`,   group:'skill', skill:s.id, sprite:pair[1], form:'elder', pal, name:names[1][0], desc:names[1][1], how:`${s.name} level 10` });
-    out.push({ id:`p_${s.id}_rare`, group:'skill', skill:s.id, sprite:pair[0], form:'rare',  pal, rare:true, name:`Shiny ${names[0][0]}`, desc:`A rare, shimmering ${names[0][0].toLowerCase()}. Few adventurers ever see one.`, how:`Shiny: 1 in 1,000 chance with each ${s.name.toLowerCase()} quest` });
+    PET_LEVELS.forEach(([lv,form],i)=>out.push({ id:`p_${s.id}_${lv}`, group:'skill', skill:s.id, sprite:trio[i], form, pal, name:names[i][0], desc:names[i][1], how:`${s.name} level ${lv}` }));
+    out.push({ id:`p_${s.id}_rare`, group:'skill', skill:s.id, sprite:trio[0], form:'rare', pal, rare:true, name:`Shiny ${names[0][0]}`, desc:`A rare, shimmering ${names[0][0].toLowerCase()}. Few adventurers ever see one.`, how:`Shiny: 1 in 1,000 chance with each ${s.name.toLowerCase()} quest` });
   }
   for(const [ab,abName] of ABILITIES){
-    ABILITY_PETS[ab].forEach(([sprite,name,desc],i)=>{ const lv = i ? 10 : 5;
-      out.push({ id:`p_ab_${ab}_${lv}`, group:'ability', ability:ab, sprite, form: i ? 'elder' : 'base', name, desc, how:`${abName} level ${lv}` }); });
+    ABILITY_PETS[ab].forEach(([sprite,name,desc,pal],i)=>{ const [lv,form] = PET_LEVELS[i];
+      out.push({ id:`p_ab_${ab}_${lv}`, group:'ability', ability:ab, sprite, form, pal: pal || null, name, desc, how:`${abName} level ${lv}` }); });
   }
   return out;
 }
 const petOrigin = p => p.starter ? 'Starter companion' : p.group==='ability' ? `${ABILITY_NAME[p.ability]} companion` : skillById(p.skill).name;
-function petArt(def, width, locked){ return sprSVG(def.sprite, {width, locked, shiny: !!def.rare, pal: def.pal || undefined}); }
+function petArt(def, width, locked){ return sprSVG(def.sprite, {width, locked, shiny: !!def.rare, aura: def.form==='legend' ? '#f2cd78' : '', pal: def.pal || undefined}); }
 const DEFAULT_CONDITIONS = () => [
   { id:'poisoned',  name:'Poisoned',  desc:'Sick today',                icon:'drop', kind:'bad'  },
   { id:'exhausted', name:'Exhausted', desc:'Didn’t sleep well',     icon:'moon', kind:'bad'  },
@@ -1363,8 +1693,8 @@ let firstRun = false;
 if(!state){ state = DEMO ? demoState() : defaultState(); firstRun = !DEMO; save(); }
 
 /* ============ Engine ============ */
-function stepUp(r){ return Math.ceil(r*RULES.growth/RULES.roundTo)*RULES.roundTo; }
-function levelInfo(xp, base){ let lvl=1, rem=xp, req=base; while(rem>=req){ rem-=req; lvl++; req=stepUp(req); } return {level:lvl, into:rem, need:req, total:xp}; }
+function stepUp(r, lvl){ const g = lvl >= RULES.lateFrom ? RULES.lateGrowth : RULES.growth; return Math.ceil(r*g/RULES.roundTo)*RULES.roundTo; }
+function levelInfo(xp, base){ let lvl=1, rem=xp, req=base; while(rem>=req){ rem-=req; lvl++; req=stepUp(req, lvl); } return {level:lvl, into:rem, need:req, total:xp}; }
 function multFor(streak){ if(streak>=RULES.streakLong.days) return 1+RULES.streakLong.bonus; if(streak>=RULES.streakShort.days) return 1+RULES.streakShort.bonus; return 1; }
 function tierFor(t, val){ let hit = null; for(const tr of t.tiers) if(val >= tr.amt && (!hit || tr.amt > hit.amt)) hit = tr; return hit; }
 function baseXP(t, val){ if(!val) return 0; if(t.type==='once') return t.xp; if(t.type==='tiers'){ const tr = tierFor(t,val); return tr ? tr.xp : 0; } return Math.floor(val/t.unit)*t.xp; }
@@ -1469,8 +1799,8 @@ function compute(){
     for(const g in gEarn) earned += Math.min(gEarn[g], gCap[g]||0);
     { const abHit = new Set([...hit].map(abilityOf));
       for(const ab of abHit){ const xp = state.skills.filter(x=>x.ability===ab).reduce((a,x)=>a+(skillXP[x.id]||0),0), lv = levelInfo(xp, RULES.abilityBase).level;
-        if(lv>=5 && !petDates[`p_ab_${ab}_5`]) petDates[`p_ab_${ab}_5`] = k; if(lv>=10 && !petDates[`p_ab_${ab}_10`]) petDates[`p_ab_${ab}_10`] = k; } }
-    for(const sid of hit){ const lv = levelInfo(skillXP[sid]||0, RULES.skillBase).level; if(lv>=5 && !petDates[`p_${sid}_5`]) petDates[`p_${sid}_5`] = k; if(lv>=10 && !petDates[`p_${sid}_10`]) petDates[`p_${sid}_10`] = k; }
+        for(const L of [5,10,15]) if(lv>=L && !petDates[`p_ab_${ab}_${L}`]) petDates[`p_ab_${ab}_${L}`] = k; } }
+    for(const sid of hit){ const lv = levelInfo(skillXP[sid]||0, RULES.skillBase).level; if(lv>=5 && !petDates[`p_${sid}_5`]) petDates[`p_${sid}_5`] = k; if(lv>=10 && !petDates[`p_${sid}_10`]) petDates[`p_${sid}_10`] = k; if(lv>=15 && !petDates[`p_${sid}_15`]) petDates[`p_${sid}_15`] = k; }
     // skill-level streaks (any quest of that skill)
     for(const s of state.skills){ skillStreak[s.id] = hit.has(s.id) ? (skillStreak[s.id]||0)+1 : (k===today ? skillStreak[s.id] : 0); skillBest[s.id] = Math.max(skillBest[s.id]||0, skillStreak[s.id]); }
     c.bestStreak = Math.max(c.bestStreak, ...tasks.map(t=>best[t.id]), 0);
@@ -1790,8 +2120,8 @@ function viewTrophies(){
     <p class="hint" style="margin:0">Days earn Bronze at 50%, Silver at 75% and Gold at 90% of the XP available that day, before streak bonuses. Weeks are rated the same way, Monday to Sunday.</p>
   </div></section>
   <div class="rule">Companions · ${ownedN}/${pets.length}</div>
-  <p class="hint" style="margin:-8px 0 0;text-align:center">Each skill has three: one at level 5, a different one at level 10, and a shiny version of the first with a 1 in 1,000 chance every time you complete one of its quests. Each ability also has its own companions at levels 5 and 10.</p>
-  ${[['starter','Starter'],['skill','Skill companions'],['ability','Ability companions']].map(([g,label])=>`<div class="label" style="text-align:center">${label}</div><div class="pets">${pets.map((p,i)=>[p,i]).filter(([p])=>p.group===g).map(([p])=>petCardHTML(p)).join('')}</div>`).join('')}
+  <p class="hint" style="margin:-8px 0 0;text-align:center">Each skill has companions at levels 5, 10 and 15, plus a shiny version of the first with a 1 in 1,000 chance every time you complete one of its quests. Each ability has its own companions at levels 5, 10 and 15.</p>
+  ${[['starter','Starter'],['skill','Skill companions'],['ability','Ability companions']].map(([g,label])=>`<div class="label" style="text-align:center">${label}</div><div class="pets ${g==='skill'?'pets4':''}">${pets.map((p,i)=>[p,i]).filter(([p])=>p.group===g).map(([p])=>petCardHTML(p)).join('')}</div>`).join('')}
   <div class="rule">Achievements · ${got}/${defs.length}</div>
   <div class="achs">${achs}</div>`;
 }
@@ -1833,7 +2163,7 @@ function viewHero(){
   <div class="btnrow"><button class="btn gold" data-act="export">Save backup</button><button class="btn" data-act="import">Restore backup</button></div>
   <button class="btn danger block" data-act="reset-ask">${DEMO?'Clear sample data and start fresh':'Reset all progress'}</button>
   <div class="verrow"><span class="hint">App version ${esc(APP_VERSION)}</span><button class="linkbtn" data-act="check-update">Check for updates</button></div>
-  <p class="hint" style="text-align:center;margin:0">Leveling: ${RULES.charBase} XP to reach level 2, then each level needs 1.5× more, rounded up to the nearest 50. Skills start at ${RULES.skillBase}.</p>`;
+  <p class="hint" style="text-align:center;margin:0">Leveling: ${RULES.charBase} XP to reach level 2, then each level needs 1.5× more (1.2× from level 10 on), rounded up to the nearest 50. Skills start at ${RULES.skillBase}, abilities at ${RULES.abilityBase}.</p>`;
 }
 
 /* ============ Render ============ */
