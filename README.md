@@ -22,6 +22,7 @@ Your progress is saved on your own phone. Nobody else can see it, including whoe
 - **Streaks:** +10% XP from day 2 of a streak, +20% from day 7.
 - **Skills** each belong to one of six **abilities** (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma). Quest XP goes to the skill, its ability and your character level. Levels need 1.5x more XP each time (1.2x from level 10 on), rounded up to the nearest 50.
 - **Weekly and side quests** are grouped by ability in collapsible lists, so long lists stay tidy.
+- **Friends:** create a friend card in the Friends tab and share your code. Friends see your name, title, level, companion, ability levels and up to three achievement badges you choose in the Hero tab. Nothing else is shared.
 - **Conditions** (Poisoned, Exhausted, Happy, or your own) are logged per day.
 
 ## Starting skills
@@ -43,7 +44,7 @@ When you first open the app you choose a starter companion: **Cat**, **Dog** or 
 
 - **Each skill** has companions at levels 5, 10 and 15 (a golden legend), plus a **shiny** version of the level 5 companion with a 1 in 1,000 chance every time you complete one of that skill's quests.
 - **Each ability** has its own companions at levels 5, 10 and 15.
-- Skills you create yourself get a slime, a golem and a dragon in colors picked from the skill's name.
+- **Skills you create yourself get their own companions automatically.** If the skill's name suggests a theme (cooking, piano, gardening, swimming, coding and many more) you get a matching set; otherwise the app picks creatures you aren't already using. Creatures that appear elsewhere get a new color, and every companion is named after your skill (for example *Cooking Mimic*, *Grand Cooking Turtle*, *Legendary Cooking Hermit Crab*). Renaming the skill renames its companions.
 
 Choose a companion to travel with you from the Hero tab. It appears on your character card.
 
