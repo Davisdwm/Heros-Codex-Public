@@ -1,13 +1,13 @@
 <html><body style="background:#191514;margin:0;padding:8px;font:11px sans-serif;color:#ccc">
 <h3 style="font:600 13px sans-serif;margin:4px 0 8px">Skill companions: level 5, level 10, shiny</h3>
 <div id="g" style="display:grid;grid-template-columns:repeat(3,116px);gap:6px"></div>
-<h3 style="font:600 13px sans-serif;margin:14px 0 8px">Ability companions: level 5, level 10 &middot; and the starter Cat</h3>
+<h3 style="font:600 13px sans-serif;margin:14px 0 8px">Ability companions: level 5, level 10 &middot; and the three starters</h3>
 <div id="a" style="display:grid;grid-template-columns:repeat(3,116px);gap:6px"></div>
 <script src="pets3.js"></script><script src="petrender3.js"></script>
 <script>
 const P = [['Exercise','hound','nightmare'],['Creativity','finch','phoenix'],['Hygiene','frog','waterelemental'],['Health','mandrake','unicorn'],['Intellectualism','owl','golem'],['Self-Concept','fox','turtle'],['Culture','bat','beholder'],['Connection','slime','kingslime']];
 const cell = (n,o,l) => `<div style="text-align:center">${sprSVG(n,Object.assign({width:112},o))}<br>${l}</div>`;
 for(const [s,a,b] of P) document.getElementById('g').insertAdjacentHTML('beforeend', cell(a,{},s+' 5')+cell(b,{},s+' 10')+cell(a,{shiny:true},s+' shiny'));
-const A = [['STR','werewolf','minotaur'],['DEX','hare','boa'],['CON','mimic','gargoyle'],['INT','goblin','lich'],['WIS','naga','treant'],['CHA','phantom','wyvern']];
-for(const [ab,a,b] of A) document.getElementById('a').insertAdjacentHTML('beforeend', cell(a,{},ab+' 5')+cell(b,{},ab+' 10')+(ab==='STR'?cell('cat',{},'Cat (starter)'):'<div></div>'));
+const A = [['STR','werewolf','minotaur'],['DEX','hare','boa'],['CON','mimic','gargoyle'],['INT','goblin','lich'],['WIS','naga','treant'],['CHA','jackalope','lion']];
+for(const [ab,a,b] of A) document.getElementById('a').insertAdjacentHTML('beforeend', cell(a,{},ab+' 5')+cell(b,{},ab+' 10')+(ab==='STR'?cell('cat',{},'Cat (starter)'):ab==='DEX'?cell('dog',{},'Dog (starter)'):ab==='CON'?cell('parrot',{},'Parrot (starter)'):'<div></div>'));
 </script></body></html>

@@ -178,6 +178,19 @@ h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;l
 .sidedone summary::-webkit-details-marker{display:none}
 .sidedone .chev{width:18px;height:18px;color:var(--gold);transition:transform .2s}
 .sidedone[open] .chev{transform:rotate(180deg)}
+.abgroup{border:1px solid var(--line);background:rgba(0,0,0,.18)}
+.abgroup>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;min-height:48px}
+.abgroup>summary::-webkit-details-marker{display:none}
+.abgroup .abname{font-family:var(--display);font-weight:700;font-size:15px}
+.abgroup .abcount{flex:1;text-align:right;font-size:13px;color:var(--muted)}
+.abgroup .abcount b{color:var(--gold)}
+.abgroup .chev{width:18px;height:18px;color:var(--gold);transition:transform .2s;flex:none}
+.abgroup[open] .chev{transform:rotate(180deg)}
+.abgroup>.quests{padding:0 10px 10px}
+.abgroup+.abgroup{margin-top:-10px;border-top:0}
+.starters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.starter{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 10px;border:1px solid var(--line);background:var(--inset);font-weight:700;font-size:14px}
+.starter.sel{border-color:var(--gold);background:rgba(217,173,85,.12);box-shadow:inset 0 0 0 1px rgba(217,173,85,.45)}
 .verrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .pickpets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .pick{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:1px solid var(--line);background:var(--panel);font-size:12px;font-weight:700;text-align:center;line-height:1.15}
@@ -381,7 +394,7 @@ const RULES = {
   rarePetChance: 1/1000  // per quest completed, for that skill's rare companion
 };
 const DEMO = !!window.XP_DEMO;
-const APP_VERSION = '2026.11.09-2007';
+const APP_VERSION = '2026.11.09-2028';
 const STORE_KEY = DEMO ? 'heros-codex-public-demo-v1' : 'heros-codex-public-v1';   // separate from any other copy on the same site
 
 /* ============ Icons ============ */
@@ -465,6 +478,82 @@ const SCHEMA = 1;
 // Sprites: 32x32 canvas. Rows of 16 chars are mirrored; rows of 32 are used as-is.
 // Region letters (auto-shaded): a c d x y z.  Flat: e eye, w white, n dark/mouth.
 const SPR = {
+parrot: { pal:{a:[2,80,50], x:[48,95,58], z:[215,80,50], c:[40,30,88], d:[28,40,30]}, e:'#120c0a', rows:[
+"....................aaaa........",
+"...................aaaaaa.......",
+"..................aacccea.......",
+"..................aacccaacc.....",
+"..................aaaaaaaccc....",
+"..................aaaaaa.cnc....",
+".................aaaaaa..nn.....",
+"................aaaaaaa.........",
+"...............aaxxxaaa.........",
+"..............aaxxxxaaa.........",
+".............azzxxxaaaa.........",
+"............azzzzxaaaa..........",
+"...........azzzzzzaaa...........",
+"..........azzzzzzaaa............",
+".........azzzzzzaaa.............",
+"........aazzzzzaaa..............",
+".......aaz..dd.dd...............",
+"......aazddddddddddddd..........",
+".....aazz.......................",
+"....aazz........................"]},
+dog: { pal:{a:[30,50,58], d:[25,45,30], c:[35,30,90], x:[355,70,48], y:[48,90,60]}, e:'#120c0a', rows:[
+".........aaaaaaa",
+"......ddaaaaaaaa",
+".....dddaaaaaaaa",
+".....dddaaweaaaa",
+".....dddaaeeaaaa",
+".....dddaaaaaccc",
+"......ddaaaacccn",
+".......daaaacccc",
+"........aaaaaaaa",
+"........xxxxxxxx",
+".......aaaaaaacy",
+"......aaaaaacccc",
+"......aaaaaacccc",
+"......aaaaaacccc",
+".....aaaaaaacccc",
+".....aaaaacc.ccc"]},
+lion: { pal:{a:[40,70,55], x:[20,65,35], c:[42,50,80]}, e:'#120c0a', rows:[
+"........xxxxxxxx",
+"......xxxxxxxxxx",
+".....xxxxxxxxxxx",
+"....xxxxaaaaaaaa",
+"....xxxaaaaaaaaa",
+"...xxxaaaaweaaaa",
+"...xxxaaaaeeaaaa",
+"...xxxaaaaaaaccc",
+"...xxxxaaaaacccn",
+"....xxxaaaaacccc",
+"....xxxxxaaaaaaa",
+".....xxxxxxaaaaa",
+"......xxxxaaaccc",
+".......aaaaaaccc",
+"......aaaaaaaccc",
+"......aaaaaaaccc",
+".....aaaaaaaaacc",
+".....aaa.aaaaaaa",
+".....ccc...cccc."]},
+jackalope: { pal:{a:[30,30,55], c:[35,25,86], d:[25,25,30], x:[350,60,75], y:[35,25,80]}, e:'#120c0a', rows:[
+"....................y.y..y.y....",
+".....................yy..yy.....",
+"......................y..y......",
+"...................aa..aa.......",
+"..................adaa.aadd.....",
+"...................adaaaada.....",
+".....................aaaaaaa....",
+"...................aaaaaeaacc...",
+"..................aaaaaaaacccn..",
+".................aaaaaaaacccc...",
+"..cc...........aaaaaaaaxxxcw....",
+".cccaaaaaaaaaaaaaaaaaaaacc......",
+"..ccaaaaaaaaaaaaaaaaaaaacc......",
+"....aaaaacccccccccaaaaaccdd.....",
+"...aaaaa..cccccc......aaaaadd...",
+"..aaaa....................aaadd.",
+".ddd............................"]},
 frog: { pal:{a:[150,55,42], c:[55,60,78], x:[150,55,30]}, e:'#120c0a', rows:[
 "................",
 "..w.............",
@@ -621,29 +710,28 @@ naga: { pal:{a:[150,55,36], c:[52,80,58], y:[55,60,72], x:[350,80,55]}, e:'#ffd2
 "...aaaaaaaaaaaaa",
 "...aacaaaaaacaaa",
 "....aaaaaaaaaaaa"]},
-goblin: { pal:{a:[95,45,42], c:[30,35,30], y:[25,45,38], x:[40,70,50], d:[25,25,20]}, e:'#ff3a2a', rows:[
-"..............aa",
-".............aaa",
-"............aaa.",
-"...........aaa..",
-"..........aaa...",
-".........aaa.aaa",
-"........aaa.aaaa",
-".aa.....aa.aaaaa",
-"..aaa...aa.aaaaa",
-"...aaaa.aaaaeeaa",
-"......aaaaaaaaaa",
+goblin: { pal:{a:[95,45,42], c:[220,70,45], y:[48,95,62], x:[265,40,35], d:[25,25,20]}, e:'#ff3a2a', rows:[
+"...............c",
+"..............cc",
+".............ccc",
+"............cccc",
+"...........ccycc",
+"..........cccccc",
+".........cccyccc",
+"......cccccccccc",
+"........aaaaaaaa",
+"........aaaaaaaa",
+"....aa..aaeeaaaa",
+".....aaaaaaaaaaa",
 "........aaaawnnn",
 "........aaaaaaaa",
-".........yyyyyyy",
-".........yyyyyyy",
-".........yyyyyyy",
-".........xxxxxxx",
-".........ccccccc",
-"..........ccc...",
-"..........ccc...",
-"..........ccc...",
-".........dddd..."]},
+".......xxxxxxxxx",
+"......xxxxxxyxxx",
+".....axxxxxxxxxx",
+".....axxxxxxyxxx",
+"......xxxxxxxxxx",
+"......xxxxxxxxxx",
+".......dddd....."]},
 phantom: { pal:{a:[200,25,82], c:[0,0,90], d:[260,25,18], x:[355,70,40]}, e:'#9ff0ff', rows:[
 "........dddddddd",
 "........dddddddd",
@@ -1131,6 +1219,11 @@ sprSVG.n = 0;
 
 // Companions: each skill has a level 5 pet, a different level 10 pet, and a shiny level 5 (1 in 1,000 per quest).
 // Each ability has its own level 5 and level 10 pets. Everyone starts with Cat.
+const STARTERS = [
+  ['p_cat','cat','Cat','An orange tabby who followed you out the door one morning and never left.'],
+  ['p_dog','dog','Dog','A loyal pup who would follow you into any dungeon, tail wagging the whole way.'],
+  ['p_parrot','parrot','Parrot','A clever macaw who repeats your victories to anyone who will listen.'],
+];
 const SKILL_PETS = { exercise:['hound','nightmare'], selfconcept:['fox','turtle'], hygiene:['frog','waterelemental'], culture:['bat','beholder'], connection:['slime','kingslime'], creativity:['finch','phoenix'], health:['mandrake','unicorn'], intellect:['owl','golem'] };
 const PET_NAMES = {
   exercise:    [['Trail Hound','Knows every path for miles and wants to run all of them.'],['Infernal Stallion','A nightmare of smoke and flame. Its hoofprints smolder for hours after a workout.']],
@@ -1146,12 +1239,13 @@ const ABILITY_PETS = {
   STR: [['werewolf','Werewolf','Strong enough to carry you home, and it would.'],['minotaur','Minotaur','Lifts boulders for fun. Has never skipped leg day.']],
   DEX: [['hare','Swift Hare','Gone before you finish saying its name.'],['boa','Lithe Boa','Ties itself in knots on purpose. Untangles with a sigh of relief.']],
   CON: [['mimic','Iron Mimic','Took a hit from a troll and only lost a hinge.'],['gargoyle','Gargoyle Sentinel','Has stood watch through a thousand storms without a crack.']],
-  INT: [['goblin','Goblin Hexer','Knows exactly one spell and casts it with total confidence.'],['lich','Lich','Spent a thousand years studying. Still has questions.']],
+  INT: [['goblin','Goblin Hexer','Knows exactly one spell and casts it with total confidence. Very proud of the hat.'],['lich','Lich','Spent a thousand years studying. Still has questions.']],
   WIS: [['naga','Naga Oracle','Sees a little further down the road than everyone else.'],['treant','Ancient Treant','Has watched forests rise and fall. Speaks slowly, and only when it matters.']],
-  CHA: [['phantom','Opera Phantom','Owns every stage it walks onto.'],['wyvern','Ancient Wyvern','Commands the sky. Everyone listens when it speaks.']],
+  CHA: [['jackalope','Jackalope','Charming, a little mischievous, and impossible to forget once you have met one.'],['lion','Lion','Walks into a room and everyone turns to look. Roars only when it matters.']],
 };
 function petDefs(){
-  const out = [{ id:'p_cat', group:'starter', sprite:'cat', form:'base', starter:true, name:'Cat', desc:'An orange tabby who followed you out the door one morning and never left.', how:'Starter companion' }];
+  const st = STARTERS.find(x=>x[0]===state.profile.starter) || STARTERS[0];
+  const out = [{ id:st[0], group:'starter', sprite:st[1], form:'base', starter:true, name:st[2], desc:st[3], how:'Starter companion' }];
   for(const s of state.skills){
     let pair = SKILL_PETS[s.id], names = PET_NAMES[s.id], pal = null;
     if(!pair){
@@ -1177,10 +1271,10 @@ const DEFAULT_CONDITIONS = () => [
   { id:'happy',     name:'Happy',     desc:'In good spirits',           icon:'sun',  kind:'good' },
 ];
 function defaultState(){
-  const t = todayKey(), C = '2000-01-01';
+  const t = todayKey();
   return {
     v: SCHEMA, created: t,
-    profile: { name: '', portrait: '', title: '', pet: 'p_cat' },
+    profile: { name: '', portrait: '', title: '', pet: 'p_cat', starter: 'p_cat' },
     conditionDefs: DEFAULT_CONDITIONS(), conditions: {}, pets: {},
     skills: [
       { id:'exercise',    name:'Exercise',        icon:'dumbbell', ability:'STR', titles:['Iron-Willed','Titan'] },
@@ -1192,7 +1286,13 @@ function defaultState(){
       { id:'culture',     name:'Culture',         icon:'globe',    ability:'WIS', titles:['Cultured','Connoisseur'] },
       { id:'connection',  name:'Connection',      icon:'heart',    ability:'CHA', titles:['Good Company','Heart of the Party'] },
     ],
-    tasks: [
+    tasks: [],
+    log: {}
+  };
+}
+function SAMPLE_TASKS(){
+  const C = '2000-01-01';
+  return [
       { id:'q_cardio',   name:'Cardio',              skill:'exercise',    type:'once',  xp:30, oneOf:'exercise', created:C },
       { id:'q_strength', name:'Strength training',   skill:'exercise',    type:'once',  xp:30, oneOf:'exercise', created:C },
       { id:'q_create',   name:'Creative practice',   skill:'creativity',  type:'tiers', unit:'min',   tiers:TIME_TIERS(), created:C },
@@ -1207,13 +1307,11 @@ function defaultState(){
       { id:'w_cook',     name:'Cook a healthy meal',        skill:'health',     type:'once', xp:30, cadence:'weekly', created:C },
       { id:'s_museum',   name:'Visit a museum or gallery',  skill:'culture',    type:'once', xp:100, cadence:'side', created:C },
       { id:'s_project',  name:'Finish a creative project',  skill:'creativity', type:'once', xp:100, cadence:'side', created:C },
-    ],
-    log: {}
-  };
+  ];
 }
 function demoState(){
   const s = defaultState(); const t = todayKey();
-  s.profile.name = 'Sample Hero';
+  s.profile.name = 'Sample Hero'; s.tasks = SAMPLE_TASKS();
   let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
   const days = 26; s.created = addDays(t, -days);
   for(let i=days; i>=1; i--){
@@ -1384,7 +1482,7 @@ function compute(){
   for(const s of state.skills) skills[s.id] = Object.assign(levelInfo(skillXP[s.id]||0, RULES.skillBase), {qty:skillQty[s.id]||{}, minutes:(skillQty[s.id]||{}).min||0, count:skillCount[s.id]||0, best:skillBest[s.id]||0, streak:skillStreak[s.id]||0});
   const abilities = {};
   for(const [ab] of ABILITIES){ const xp = state.skills.filter(s=>s.ability===ab).reduce((a,s)=>a+(skillXP[s.id]||0),0); abilities[ab] = levelInfo(xp, RULES.abilityBase); }
-  petDates.p_cat = start;
+  petDates[state.profile.starter || 'p_cat'] = start;
   for(const id in state.pets) if(!petDates[id]) petDates[id] = state.pets[id].date || today;
   return { today, start, days, weeks, char: levelInfo(c.total, RULES.charBase), skills, abilities, cur, best, nextMult, ach, defs, c, pets: petDates, sideDone };
 }
@@ -1512,16 +1610,28 @@ function viewToday(){
     ${isToday ? '' : `<button class="linkbtn" data-act="today" style="align-self:center">Back to today</button>`}
   </div></section>
   <div class="rule">Daily Quests</div>
-  <div class="quests">${rows || `<p class="muted">No quests yet. Add one from the Hero tab.</p>`}</div>
-  ${weekly.length ? `<div class="rule">Weekly Quests</div>
+  ${rows ? `<div class="quests">${rows}</div>` : `<p class="hint" style="text-align:center;margin:0">No daily quests yet. Daily quests count toward your bronze, silver and gold days.</p>`}
+  <button class="btn gold block" data-act="new-daily">Add a new daily quest</button>
+  <div class="rule">Weekly Quests</div>
   <p class="hint" style="margin:-8px 0 0;text-align:center">Aim for a few times a week. They earn XP but don\u2019t count toward day medals.</p>
-  <div class="quests">${weeklyRows}</div>` : ''}
+  ${abGroups('weekly', weekly, t=>questRow(t, k, d, {week:weekCount(t.id)}), k) || `<p class="hint" style="text-align:center;margin:0">No weekly quests yet.</p>`}
+  <button class="btn gold block" data-act="new-weekly">Add a new weekly quest</button>
   <div class="rule">Side Quests</div>
   <p class="hint" style="margin:-8px 0 0;text-align:center">One-time adventures. Complete each once for XP. They don\u2019t count toward day medals.</p>
-  <div class="quests">${sides.map(t=>questRow(t, k, d, {side:true})).join('') || `<p class="hint" style="text-align:center;margin:0">No side quests yet.</p>`}</div>
-  <button class="btn gold block" data-act="new-side">Add a side quest</button>
+  ${abGroups('side', sides, t=>questRow(t, k, d, {side:true}), k) || `<p class="hint" style="text-align:center;margin:0">No side quests yet.</p>`}
+  <button class="btn gold block" data-act="new-side">Add a new side quest</button>
   ${sidesDone.length ? `<details class="sidedone"><summary><span class="label">Completed side quests \u00b7 ${sidesDone.length}</span>${svg('chevron','class="chev"')}</summary>
     <div class="list">${sidesDone.map(t=>`<div><span>${esc(t.name)}<br><span class="muted" style="font-size:13px">${esc(skillById(t.skill).name)} \u00b7 ${esc(niceDate(R.sideDone[t.id]))}</span></span><span style="display:flex;align-items:center;gap:12px"><b class="num" style="color:var(--gold)">+${fmt(t.xp)}</b><button class="linkbtn" data-act="side-undo" data-id="${t.id}">Undo</button></span></div>`).join('')}</div></details>` : ''}`;
+}
+// Collapsible groups by ability (weekly and side quests). Open groups stay open across re-renders.
+const openGroups = new Set();
+function abGroups(kind, list, row, k){
+  const e = state.log[k] || {};
+  return ABILITIES.map(([ab,name])=>{
+    const items = list.filter(t=>abilityOf(t.skill)===ab); if(!items.length) return '';
+    const done = items.filter(t=>e[t.id]).length, key = kind+'-'+ab;
+    return `<details class="abgroup" data-g="${key}" ${openGroups.has(key)?'open':''}><summary><span class="abbr">${ab}</span><span class="abname">${name}</span><span class="abcount">${items.length} quest${items.length>1?'s':''}${done?` \u00b7 <b>${done} done</b>`:''}</span>${svg('chevron','class="chev"')}</summary><div class="quests">${items.map(row).join('')}</div></details>`;
+  }).join('');
 }
 function questRow(t, k, d, opt){
   opt = opt || {};
@@ -1558,7 +1668,7 @@ function questRow(t, k, d, opt){
   return `<article class="frame quest ${done?'done is-done':''} ${opt.dim?'dim':''}"><div class="in ${t.type==='tiers'?'tiered':''}">
     <div class="sigil">${svg(s.icon)}</div>
     <div class="qmain"><div class="qname">${esc(t.name)}</div>
-      <div class="qmeta">${meta}${isWeekly(t) ? `<span class="abbr sm">${abilityOf(t.skill)}</span>` : ''}<span>${esc(s.name)}</span>${goal}${t.oneOf && !opt.dim ? `<span class="tag">${esc(GROUP_NAME[t.oneOf]||t.oneOf)}</span>` : ''}${opt.dim ? `<span class="tag">Bonus only</span>` : ''}${isWeekly(t) ? `<span class="tag">${opt.week||0}\u00d7 this week</span>` : ''}${opt.side ? `<span class="abbr sm">${abilityOf(t.skill)}</span>` : streakHTML+bonusHTML}</div></div>
+      <div class="qmeta">${meta}<span>${esc(s.name)}</span>${goal}${t.oneOf && !opt.dim ? `<span class="tag">${esc(GROUP_NAME[t.oneOf]||t.oneOf)}</span>` : ''}${opt.dim ? `<span class="tag">Bonus only</span>` : ''}${isWeekly(t) ? `<span class="tag">${opt.week||0}\u00d7 this week</span>` : ''}${opt.side ? '' : streakHTML+bonusHTML}</div></div>
     ${ctrl}</div></article>`;
 }
 
@@ -1721,6 +1831,7 @@ function render(){
   $('#app').innerHTML = `<main class="wrap">${html}</main>`;
   renderTabs(); settleBars(); fitNames();
   const cd = $('#conds'); if(cd) cd.addEventListener('toggle', ()=>{ condOpen = cd.open; });
+  document.querySelectorAll('details.abgroup').forEach(el=>el.addEventListener('toggle', ()=>{ el.open ? openGroups.add(el.dataset.g) : openGroups.delete(el.dataset.g); }));
   const nameInput = $('#f-heroname');
   if(nameInput) nameInput.addEventListener('change', ()=>{ state.profile.name = nameInput.value.trim().slice(0,40); save(); R = compute(); });
   const photo = $('#f-photo');
@@ -1811,7 +1922,7 @@ function wireIcons(root, cb){ root.querySelectorAll('[data-icon]').forEach(b=>b.
 
 function abilitySelect(id, sel){ return `<select id="${id}">${ABILITIES.map(([ab,n])=>`<option value="${ab}" ${ab===sel?'selected':''}>${n} (${ab})</option>`).join('')}</select>`; }
 function taskSheet(id, preset){
-  const t = id ? state.tasks.find(x=>x.id===id) : {name:'', skill: state.skills[0] ? state.skills[0].id : '__new', type:'once', xp: preset==='side' ? 50 : 30, cadence: preset};
+  const t = id ? state.tasks.find(x=>x.id===id) : {name:'', skill: state.skills[0] ? state.skills[0].id : '__new', type:'once', xp: preset==='side' ? 50 : 30, cadence: preset==='daily' ? undefined : preset};
   let type = t.type==='once' ? 'once' : 'tiers', icon = 'star', cadence = isSide(t) ? 'side' : isWeekly(t) ? 'weekly' : 'daily';
   const tiers = t.type==='tiers' ? t.tiers.map(x=>({...x})) : TIME_TIERS();
   const unit = t.type==='tiers' ? t.unit : 'min';
@@ -1819,7 +1930,7 @@ function taskSheet(id, preset){
   const tierRow = i => `<div class="tierrow"><span class="label">Bubble ${i+1}</span>
       <input id="f-amt${i}" type="number" inputmode="numeric" min="1" value="${tiers[i]?tiers[i].amt:''}" aria-label="Bubble ${i+1} amount" placeholder="Amount">
       <input id="f-xp${i}" type="number" inputmode="numeric" min="1" value="${tiers[i]?tiers[i].xp:''}" aria-label="Bubble ${i+1} XP" placeholder="XP"></div>`;
-  openSheet(`<h2>${id ? (isSide(t)?'Edit side quest':'Edit quest') : (preset==='side'?'New side quest':'New quest')}</h2>
+  openSheet(`<h2>${id ? (isSide(t)?'Edit side quest':'Edit quest') : (preset==='side'?'New side quest':preset==='weekly'?'New weekly quest':preset==='daily'?'New daily quest':'New quest')}</h2>
     <div class="field"><label for="f-tname">Quest</label><input id="f-tname" value="${esc(t.name)}" placeholder="${(preset==='side'||isSide(t)) ? 'e.g. Fix the leaky faucet' : 'e.g. Stretch'}" autocomplete="off"></div>
     <div class="field"><label for="f-tskill">Skill it trains</label><select id="f-tskill">${opts}</select></div>
     <div id="f-newskill-wrap" hidden style="display:flex;flex-direction:column;gap:10px">
@@ -1914,7 +2025,7 @@ function skillSheet(id){
     wireIcons(root, i=>icon=i);
     root.querySelector('#f-cancel').onclick = closeSheet;
     const sdel = root.querySelector('#f-sdel');
-    if(sdel) sdel.onclick = ()=>{ mutate(()=>{ state.skills = state.skills.filter(x=>x.id!==id); if(state.profile.pet && state.profile.pet.startsWith('p_'+id+'_')) state.profile.pet = 'p_cat'; }); closeSheet(); };
+    if(sdel) sdel.onclick = ()=>{ mutate(()=>{ state.skills = state.skills.filter(x=>x.id!==id); if(state.profile.pet && state.profile.pet.startsWith('p_'+id+'_')) state.profile.pet = state.profile.starter || 'p_cat'; }); closeSheet(); };
     root.querySelector('#f-save').onclick = ()=>{
       const name = root.querySelector('#f-sname').value.trim();
       if(!name){ const e=root.querySelector('#f-err'); e.textContent='Give the skill a name.'; e.hidden=false; return; }
@@ -2020,11 +2131,15 @@ function resetSheet(){
   });
 }
 function welcomeSheet(){
+  let pick = 'p_cat';
   openSheet(`<div class="label" style="color:var(--gold)">A new codex opens</div><h2>Who is our hero?</h2>
-    <p class="hint" style="margin:0">Check off your daily quests to earn XP. Every quest trains a skill, and every skill levels up your character.</p>
+    <p class="hint" style="margin:0">Check off quests to earn XP. Every quest trains a skill, every skill builds an ability, and all of it levels up your character.</p>
     <div class="field"><label for="f-wname">Your name</label><input id="f-wname" placeholder="Name" autocomplete="off"></div>
+    <div class="field"><label>Choose your first companion</label>
+      <div class="starters">${STARTERS.map(([id,sprite,name])=>`<button type="button" class="starter ${id===pick?'sel':''}" data-starter="${id}" aria-pressed="${id===pick}">${sprSVG(sprite,{width:80})}<span>${name}</span></button>`).join('')}</div></div>
     <button class="btn primary block" id="f-begin">Begin</button>`, root=>{
-    root.querySelector('#f-begin').onclick = ()=>{ state.profile.name = root.querySelector('#f-wname').value.trim().slice(0,40); save(); closeSheet(); render(); };
+    root.querySelectorAll('[data-starter]').forEach(btn=>btn.onclick = ()=>{ pick = btn.dataset.starter; root.querySelectorAll('[data-starter]').forEach(x=>{ const on = x.dataset.starter===pick; x.classList.toggle('sel', on); x.setAttribute('aria-pressed', on); }); });
+    root.querySelector('#f-begin').onclick = ()=>{ state.profile.name = root.querySelector('#f-wname').value.trim().slice(0,40); state.profile.starter = pick; state.profile.pet = pick; save(); R = compute(); closeSheet(); render(); };
   });
 }
 
@@ -2051,6 +2166,8 @@ document.addEventListener('click', e=>{
   else if(a==='edit-task') taskSheet(id);
   else if(a==='new-task') taskSheet(null);
   else if(a==='new-side') taskSheet(null, 'side');
+  else if(a==='new-weekly') taskSheet(null, 'weekly');
+  else if(a==='new-daily') taskSheet(null, 'daily');
   else if(a==='side-undo'){ const k = R.sideDone[id]; if(k) mutate(()=>{ const e = state.log[k]; if(e){ delete e[id]; if(!Object.keys(e).length) delete state.log[k]; } }); }
   else if(a==='edit-skill') skillSheet(id);
   else if(a==='new-skill') skillSheet(null);

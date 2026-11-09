@@ -21,6 +21,7 @@ Your progress is saved on your own phone. Nobody else can see it, including whoe
 - **Medals:** a day is Bronze at 50%, Silver at 75% and Gold at 90% of that day's daily-quest XP, before streak bonuses. The total scales with whatever daily quests you set up.
 - **Streaks:** +10% XP from day 2 of a streak, +20% from day 7.
 - **Skills** each belong to one of six **abilities** (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma). Quest XP goes to the skill, its ability and your character level. Levels need 1.5x more XP each time, rounded up to the nearest 50.
+- **Weekly and side quests** are grouped by ability in collapsible lists, so long lists stay tidy.
 - **Conditions** (Poisoned, Exhausted, Happy, or your own) are logged per day.
 
 ## Starting skills
@@ -34,11 +35,11 @@ Your progress is saved on your own phone. Nobody else can see it, including whoe
 | Self-Concept, Culture | Wisdom |
 | Connection | Charisma |
 
-Add your own quests to these skills from the **Hero** tab. You can also rename skills, change their ability, add new skills, and delete starter quests you don't want.
+The app starts with no quests. Use the **Add a new daily / weekly / side quest** buttons on the Quests tab (or the Hero tab) to add your own and attach each one to a skill. You can also rename skills, change their ability, add new skills, and delete skills you don't use.
 
 ## Companions
 
-Everyone starts with **Cat**. Then:
+When you first open the app you choose a starter companion: **Cat**, **Dog** or **Parrot**. Then:
 
 - **Each skill** has a companion at level 5, a different one at level 10, and a **shiny** version of the level 5 companion with a 1 in 1,000 chance every time you complete one of that skill's quests.
 - **Each ability** has its own companions at levels 5 and 10.
