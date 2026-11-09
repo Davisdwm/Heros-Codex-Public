@@ -439,7 +439,7 @@ const RULES = {
 };
 const DEMO = !!window.XP_DEMO;
 const APP_KIND = 'public';
-const APP_VERSION = '2026.11.09-2231';
+const APP_VERSION = '2026.11.09-2245';
 const STORE_KEY = DEMO ? 'heros-codex-public-demo-v1' : 'heros-codex-public-v1';   // separate from any other copy on the same site
 
 /* ============ Icons ============ */
@@ -518,7 +518,7 @@ const ABILITY_NAME = Object.fromEntries(ABILITIES);
 const PAGE_TIERS = () => [{amt:15,xp:10},{amt:30,xp:20},{amt:50,xp:30}];
 const TIME_TIERS = () => [{amt:30,xp:10},{amt:60,xp:20},{amt:90,xp:30}];
 const GROUP_NAME = { exercise:'Exercise' };
-const SCHEMA = 1;
+const SCHEMA = 2;
 
 /* ============ Companions (pixel pets) ============ */
 // Sprites: 32x32 canvas. Rows of 16 chars are mirrored; rows of 32 are used as-is.
@@ -1795,13 +1795,14 @@ const STARTERS = [
   ['p_dog','dog','Dog','A loyal pup who would follow you into any dungeon, tail wagging the whole way.'],
   ['p_parrot','parrot','Parrot','A clever macaw who repeats your victories to anyone who will listen.'],
 ];
-const SKILL_PETS = { exercise:['hound','nightmare','pegasus'], selfconcept:['fox','turtle','kitsune'], hygiene:['hare','waterelemental','leviathan'], culture:['bat','beholder','vampire'], connection:['slime','kingslime','emperorslime'], creativity:['finch','phoenix','thunderbird'], health:['mandrake','treant','elk'], intellect:['owl','golem','lich'] };
+const SKILL_PETS = { pliability:['lizard','boa','kraken'], exercise:['hound','nightmare','pegasus'], selfconcept:['fox','turtle','kitsune'], hygiene:['hare','waterelemental','leviathan'], culture:['bat','beholder','vampire'], connection:['slime','kingslime','emperorslime'], creativity:['finch','phoenix','thunderbird'], health:['mandrake','treant','elk'], intellect:['owl','golem','lich'] };
 const PET_NAMES = {
   exercise:    [['Trail Hound','Knows every path for miles and wants to run all of them.'],['Infernal Stallion','A nightmare of smoke and flame. Its hoofprints smolder for hours after a workout.'],['Pegasus','Moves so fast it simply takes off. No workout is too hard for it.']],
   selfconcept: [['Lotus Fox','Naps in perfect balance on one paw. Knows exactly who it is.'],['Turtle Monk','Has held the same pose for three hundred years. Still breathing deeply.'],['Nine-Tailed Kitsune','A tail for every lesson learned about itself. Perfectly still, perfectly aware.']],
   hygiene:     [['Fluffy Bunny','Grooms itself twelve times a day and looks wonderful every time.'],['Water Elemental','A living tide that keeps everything it touches fresh and clean.'],['Leviathan','A serpent of the clearest seas. Nothing murky survives near it.']],
   culture:     [['Matinee Bat','Watches from the rafters. Shushes no one.'],['Beholder','Never blinks during a show. Has a dozen eyes for every scene.'],['Vampire Lord','Has seen every play, film and concert for five hundred years. Still has opinions.']],
   connection:  [['Chatter Slime','Wobbles happily whenever someone says hello.'],['King Slime','Rules a kingdom of friends. Its crown has a jewel for each one.'],['Emperor Slime','Stood up one day and never sat back down. Its court is everyone it has ever met.']],
+  pliability:  [['Limber Lizard','Bends around every rock on the trail without breaking stride.'],['Lithe Boa','Ties itself in knots on purpose. Untangles with a sigh of relief.'],['Kraken','Reaches eight directions at once. Never once pulled a muscle.']],
   creativity:  [['Lyre Finch','Hums your last idea back to you, slightly off-key.'],['Phoenix','Burns bright, starts fresh, and never stops creating.'],['Thunderbird','Every beat of its wings is a new idea. Every cry is a masterpiece.']],
   health:      [['Mandrake Sprout','Screams softly when thirsty. Quite polite about it.'],['Ancient Treant','Has outlived every illness in the forest by taking good care of itself.'],['Mossy Elk','Moss grows on its back and ferns sprout from its antlers. Strong, calm and well rested.']],
   intellect:   [['Wisened Owl','Peers over its spectacles at anything you have not finished reading.'],['Tome Golem','A guardian stitched from a hundred books. It remembers every page.'],['Lich','Spent a thousand years studying. Still has a list of books it wants to get to.']],
@@ -1919,7 +1920,8 @@ function defaultState(){
     conditionDefs: DEFAULT_CONDITIONS(), conditions: {}, pets: {},
     skills: [
       { id:'exercise',    name:'Exercise',        icon:'dumbbell', ability:'STR', titles:['Iron-Willed','Titan'] },
-      { id:'creativity',  name:'Creativity',      icon:'brush',    ability:'DEX', titles:['Artisan','Visionary'] },
+      { id:'pliability',  name:'Pliability',      icon:'leaf',     ability:'DEX', titles:['Limber','Supple as a Willow'] },
+      { id:'creativity',  name:'Creativity',      icon:'brush',    ability:'CHA', titles:['Artisan','Visionary'] },
       { id:'hygiene',     name:'Hygiene',         icon:'drop',     ability:'CON', titles:['Well-Kept','Pristine'] },
       { id:'health',      name:'Health',          icon:'potion',   ability:'CON', titles:['Hale','Evergreen'] },
       { id:'intellect',   name:'Intellectualism', icon:'book',     ability:'INT', titles:['Scholar','Sage'] },
@@ -1941,6 +1943,7 @@ function SAMPLE_TASKS(){
       { id:'q_brush',    name:'Brush and floss',     skill:'hygiene',     type:'once',  xp:10, created:C },
       { id:'q_water',    name:'Drink enough water',  skill:'health',      type:'once',  xp:10, created:C },
       { id:'q_reflect',  name:'Journal or reflect',  skill:'selfconcept', type:'once',  xp:10, created:C },
+      { id:'q_stretch',  name:'Stretch',             skill:'pliability',  type:'once',  xp:10, created:C },
       { id:'w_friend',   name:'Reach out to a friend',      skill:'connection', type:'once', xp:10, cadence:'weekly', created:C },
       { id:'w_newperson',name:'Meet someone new',           skill:'connection', type:'once', xp:30, cadence:'weekly', created:C },
       { id:'w_culture',  name:'Experience something new',   skill:'culture',    type:'once', xp:30, cadence:'weekly', created:C },
@@ -1977,6 +1980,10 @@ function migrate(s){
   s.created = s.created || todayKey();
   s.conditionDefs = s.conditionDefs || DEFAULT_CONDITIONS(); s.conditions = s.conditions || {}; s.pets = s.pets || {};
   s.skills.forEach(k=>{ if(!ABILITY_NAME[k.ability]) k.ability = 'WIS'; });
+  if((s.v||1) < 2){
+    const cr = s.skills.find(k=>k.id==='creativity'); if(cr && cr.ability==='DEX') cr.ability = 'CHA';
+    if(!s.skills.some(k=>k.id==='pliability')) s.skills.splice(0, 0, { id:'pliability', name:'Pliability', icon:'leaf', ability:'DEX', titles:['Limber','Supple as a Willow'] });
+  }
   s.v = SCHEMA;
   return s;
 }

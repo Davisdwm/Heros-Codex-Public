@@ -5,7 +5,7 @@
 <div id="a" style="display:grid;grid-template-columns:repeat(4,88px);gap:4px"></div>
 <script src="pets3.js"></script><script src="petrender3.js"></script>
 <script>
-const P = [['Exercise','hound','nightmare','pegasus'],['Creativity','finch','phoenix','thunderbird'],['Hygiene','hare','waterelemental','leviathan'],['Health','mandrake','treant','elk'],['Intellect','owl','golem','lich'],['Self-Concept','fox','turtle','kitsune'],['Culture','bat','beholder','vampire'],['Connection','slime','kingslime','emperorslime']];
+const P = [['Exercise','hound','nightmare','pegasus'],['Pliability','lizard','boa','kraken'],['Creativity','finch','phoenix','thunderbird'],['Hygiene','hare','waterelemental','leviathan'],['Health','mandrake','treant','elk'],['Intellect','owl','golem','lich'],['Self-Concept','fox','turtle','kitsune'],['Culture','bat','beholder','vampire'],['Connection','slime','kingslime','emperorslime']];
 const cell = (n,o,l) => `<div style="text-align:center">${sprSVG(n,Object.assign({width:84},o))}<br>${l}</div>`;
 for(const [s,a,b,c] of P) document.getElementById('g').insertAdjacentHTML('beforeend', cell(a,{},s+' 5')+cell(b,{},s+' 10')+cell(c,{aura:'#f2cd78'},s+' 15')+cell(a,{shiny:true},'shiny'));
 const pup={a:[215,10,55], d:[215,15,30], c:[0,0,90], x:[200,70,45], y:[48,90,60]}, sage={a:[225,70,45], x:[45,95,58], z:[190,70,50], c:[45,40,88], d:[28,40,30]};

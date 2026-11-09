@@ -30,11 +30,11 @@ Your progress is saved on your own phone. Nobody else can see it, including whoe
 | Skill | Ability |
 |---|---|
 | Exercise | Strength |
-| Creativity | Dexterity |
+| Pliability | Dexterity |
 | Hygiene, Health | Constitution |
 | Intellectualism | Intelligence |
 | Self-Concept, Culture | Wisdom |
-| Connection | Charisma |
+| Creativity, Connection | Charisma |
 
 The app starts with no quests. Use the **Add a new daily / weekly / side quest** buttons on the Quests tab (or the Hero tab) to add your own and attach each one to a skill. You can also rename skills, change their ability, add new skills, and delete skills you don't use.
 
