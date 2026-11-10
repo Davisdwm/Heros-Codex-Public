@@ -42,8 +42,8 @@ The app starts with no quests. Use the **Add a new daily / weekly / side quest**
 
 When you first open the app you choose a starter companion: **Cat**, **Dog** or **Parrot**. Then:
 
-- **Each skill** has companions at levels 5, 10 and 15 (a golden legend), plus a **shiny** version of the level 5 companion with a 1 in 1,000 chance every time you complete one of that skill's quests.
-- **Each ability** has its own companions at levels 5, 10 and 15.
+- **Each skill** has companions at levels 5, 10 and 15 (a golden legend), plus a **shiny** version of the level 5 companion. Each quest you complete has a 1 in (1,000 × that skill's daily quests) chance, so adding more quests never improves the odds.
+- **Each ability** has its own companions at levels 5, 10 and 15. Once you find one, its shiny version can appear (1 in 1,000 per quest for that ability); until then it stays hidden.
 - **Skills you create yourself get their own companions automatically.** If the skill's name suggests a theme (cooking, piano, gardening, swimming, coding and many more) you get a matching set; otherwise the app picks creatures you aren't already using. Creatures that appear elsewhere get a new color, and every companion is named after your skill (for example *Cooking Mimic*, *Grand Cooking Turtle*, *Legendary Cooking Hermit Crab*). Renaming the skill renames its companions.
 
 Choose a companion to travel with you from the Hero tab. It appears on your character card.
